@@ -212,5 +212,7 @@ if smi != "":
 
         st.write(f"{len(higher_mixtures_with_chem)} sample(s) with ternary or higher mixtures containing {smi}")
 
-        if len(higher_mixtures_with_chem) > 0:
-            st.dataframe(higher_mixtures_with_chem, hide_index=True)
+        st.write("## 🚧 Under Construction 🚧")
+        # if len(higher_mixtures_with_chem) > 0:
+        #     st.dataframe(higher_mixtures_with_chem, hide_index=True)
+        
