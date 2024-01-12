@@ -9,16 +9,33 @@ import plotly.express as px
 
 import streamlit as st
 
-import boto3
-import awswrangler as wr
-
 
 if not os.path.exists("component_df.pkl"):
-    boto_session: boto3.Session = boto3.Session(
-        region_name="us-west-2",
-        profile_name="noble-internal",
-        )
-    s3 = boto_session.client("s3")
+
+    import boto3
+    import awswrangler as wr
+
+    # Create STS client
+    sts_client = boto3.client('sts')
+
+    # Assume the role
+    assumed_role = sts_client.assume_role(
+        RoleArn=os.environ['AWS_ROLE_ARN'],
+        RoleSessionName="Session"
+    )
+
+    # Extract credentials
+    credentials = assumed_role['Credentials']
+
+    # Create a new Boto3 session with assumed role credentials
+    boto_session = boto3.Session(
+        aws_access_key_id=credentials['AccessKeyId'],
+        aws_secret_access_key=credentials['SecretAccessKey'],
+        aws_session_token=credentials['SessionToken']
+    )
+
+    # Example use of the session
+    s3 = boto_session.client('s3')
 
     component_df = wr.s3.read_excel(
         path="s3://research-formulations/ternary-viscosity/processed/categorized_KFv1_parsed_v2.xlsx",
